@@ -11,16 +11,16 @@ import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.controllable.RunToVelocity;
 import dev.nextftc.hardware.impl.MotorEx;
 
-public class Feeder implements Subsystem {
+public class AuxFeeder implements Subsystem {
 
-    public static final Feeder INSTANCE = new Feeder();
+    public static final AuxFeeder INSTANCE = new AuxFeeder();
     private Telemetry telemetry;
-    private Feeder() {}
+    private AuxFeeder() {}
 
     private double power = 0;
 
 
-    private final MotorEx pusherMotor = new MotorEx("pusherMotor")
+    private final MotorEx AuxFeederMotor = new MotorEx("AuxFeederMotor")
             .brakeMode();
 
     public Command spinUp = new InstantCommand(() -> power = 1).requires(this);
@@ -35,7 +35,7 @@ public class Feeder implements Subsystem {
     @Override
     public void periodic() {
 
-            pusherMotor.setPower(power);
+        AuxFeederMotor.setPower(power);
 
     }
 }

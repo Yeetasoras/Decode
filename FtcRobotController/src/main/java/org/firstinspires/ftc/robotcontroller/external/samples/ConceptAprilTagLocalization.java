@@ -78,7 +78,7 @@ public class ConceptAprilTagLocalization extends LinearOpMode {
      * Origin location: Center of the lens
      * Axes orientation: +x right, +y down, +z forward (from camera's perspective)
      *
-     * Robot axes (this is typical, but you can define this however you want):
+     * Robot axes    (this is typical, but you can define this however you want):
      * Origin location: Center of the robot at field height
      * Axes orientation: +x right, +y forward, +z upward
      *

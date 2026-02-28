@@ -15,35 +15,32 @@ import dev.nextftc.hardware.impl.MotorEx;
 import dev.nextftc.hardware.powerable.SetPower;
 import dev.nextftc.ftc.Gamepads;
 
-public class Shooter implements Subsystem {
-    public static final Shooter INSTANCE = new Shooter();
+public class Intake implements Subsystem {
+    public static final Intake INSTANCE = new Intake();
     private Telemetry telemetry;
-    private Shooter() {
+    private Intake() {
 
     }
     private boolean powered = true;
-    private final ControlSystem flywheelControlSystem = ControlSystem.builder()
-            .velPid(1)
-            .build();
 
 
-    private final MotorEx flywheelMotor = new MotorEx("flywheelMotor")
+
+    private final MotorEx intakeMotor = new MotorEx("intakeMotor")
             .floatMode()
             .reversed();
 
     private double power = 0;
+
     public Command spinUp = new InstantCommand(() -> power = 1).requires(this);
     public Command cutPower = new InstantCommand(() -> power = 0).requires(this);
 
+    public Command changeMotion = new InstantCommand(() -> intakeMotor.reverse()).requires(this);
 
-    // From here is the changing power system up 10% and down 10%
-    public Command upPower10 = new InstantCommand(() -> power += 0.1).requires(this);
-    public Command downPower10 = new InstantCommand(() -> power -= 0.1).requires(this);
 
-    //until here
     @Override
     public void periodic() {
-        flywheelMotor.setPower(power);
+        intakeMotor.setPower(power);
+
     }
 
 }
