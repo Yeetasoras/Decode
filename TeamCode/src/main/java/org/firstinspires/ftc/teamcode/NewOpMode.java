@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Feeder;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterControlled;
 
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.components.BindingsComponent;
@@ -15,11 +17,11 @@ import dev.nextftc.ftc.components.BulkReadComponent;
 import dev.nextftc.hardware.driving.MecanumDriverControlled;
 import dev.nextftc.hardware.impl.MotorEx;
 
-@TeleOp(name = "NextFTC TeleOp Program Java")
-public class DriveOpMode extends NextFTCOpMode {
-    public DriveOpMode() {
+@TeleOp(name = "Drive w/ Cam")
+public class NewOpMode extends NextFTCOpMode {
+    public NewOpMode() {
         addComponents(
-                new SubsystemComponent(Shooter.INSTANCE, Feeder.INSTANCE, Intake.INSTANCE),
+                new SubsystemComponent(ShooterControlled.INSTANCE, Feeder.INSTANCE, Intake.INSTANCE, Camera.INSTANCE),
                 BulkReadComponent.INSTANCE,
                 BindingsComponent.INSTANCE
                 //the instance only brings the one instance in and cannot change and only does it at one point
@@ -70,19 +72,20 @@ public class DriveOpMode extends NextFTCOpMode {
                 .whenBecomesTrue(Feeder.INSTANCE.spinUp)
                 .whenBecomesFalse(Feeder.INSTANCE.cutPower);
 
-        Gamepads.gamepad1().rightBumper()
-                .whenBecomesTrue(Shooter.INSTANCE.upPower10);
-        Gamepads.gamepad1().leftBumper()
-                .whenBecomesTrue(Shooter.INSTANCE.downPower10);
-
 
         Gamepads.gamepad1().cross()
-                .whenBecomesTrue(Shooter.INSTANCE.spinUp);
+                .whenBecomesTrue(ShooterControlled.INSTANCE.spinUp);
 
         Gamepads.gamepad1().circle()
-                .whenBecomesTrue(Shooter.INSTANCE.cutPower);
+                .whenBecomesTrue(ShooterControlled.INSTANCE.cutPower);
 
 
 
+    }
+
+    @Override
+    public void onUpdate() {
+
+        telemetry.update();
     }
 }
