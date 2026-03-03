@@ -1,7 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Camera;
 import org.firstinspires.ftc.teamcode.subsystems.Feeder;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -19,6 +22,8 @@ import dev.nextftc.hardware.impl.MotorEx;
 
 @TeleOp(name = "Drive w/ Cam")
 public class NewOpMode extends NextFTCOpMode {
+
+    private TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     public NewOpMode() {
         addComponents(
                 new SubsystemComponent(ShooterControlled.INSTANCE, Feeder.INSTANCE, Intake.INSTANCE, Camera.INSTANCE),
@@ -85,7 +90,7 @@ public class NewOpMode extends NextFTCOpMode {
 
     @Override
     public void onUpdate() {
-
+        panelsTelemetry.update(telemetry);
         telemetry.update();
     }
 }

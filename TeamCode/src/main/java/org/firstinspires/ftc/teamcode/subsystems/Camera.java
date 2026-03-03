@@ -46,6 +46,7 @@ public class Camera implements Subsystem {
 
     @Override
     public void initialize() {
+        telemetry = ActiveOpMode.telemetry();
         aprilTag = new AprilTagProcessor.Builder()
 
                 // The following default settings are available to un-comment and edit as needed.
@@ -78,9 +79,21 @@ public class Camera implements Subsystem {
                 ActiveOpMode.telemetry().addData("Detected Apriltag", detection.id);
                 int id = detection.id;
 
-                if (id == 20 || id == 24) {
-                    bearingToGoal = Angle.fromDeg(detection.ftcPose.bearing);
+                if (detection.metadata != null) {
+                    telemetry.addLine(String.format("\n==== (ID %d) %s", detection.id, detection.metadata.name));
+                    telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detection.ftcPose.x, detection.ftcPose.y, detection.ftcPose.z));
+                    telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detection.ftcPose.pitch, detection.ftcPose.roll, detection.ftcPose.yaw));
+                    telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detection.ftcPose.range, detection.ftcPose.bearing, detection.ftcPose.elevation));
+
+                    if (id == 20 || id == 24) {
+                        bearingToGoal = Angle.fromDeg(detection.ftcPose.bearing);
+                    }
+                } else {
+                    telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
+                    telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
                 }
+
+
 
                 if (id == 21 || id == 22 || id == 23) {
                     obelisk = id;
