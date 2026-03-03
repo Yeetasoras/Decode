@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.bylazar.configurables.annotations.Configurable;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import dev.nextftc.control.ControlSystem;
@@ -11,6 +13,7 @@ import dev.nextftc.core.subsystems.Subsystem;
 import dev.nextftc.ftc.ActiveOpMode;
 import dev.nextftc.hardware.impl.MotorEx;
 
+@Configurable
 public class ShooterControlled implements Subsystem {
     public static final ShooterControlled INSTANCE = new ShooterControlled();
     private Telemetry telemetry;
@@ -18,17 +21,18 @@ public class ShooterControlled implements Subsystem {
 
     }
     public double velocity = 0;
-    private final ControlSystem flywheelControlSystem = ControlSystem.builder()
+
+
+    private static final ControlSystem flywheelControlSystem = ControlSystem.builder()
             .velPid(0.001, 0.0, 0.0)
-            .basicFF(0.003, 0.08, 0.0)
+            .basicFF(-0.003, 0.08, 0.0)
             .build();
 
 
     private final MotorEx flywheelMotor = new MotorEx("flywheelMotor")
-            .floatMode()
-            .reversed();
+            .floatMode();
 
-    public Command spinUp = new InstantCommand(() -> flywheelControlSystem.setGoal(new KineticState(0.0, 1500.0))).requires(this);
+    public Command spinUp = new InstantCommand(() -> flywheelControlSystem.setGoal(new KineticState(0.0, -1800.0))).requires(this);
     public Command cutPower = new InstantCommand(() -> flywheelControlSystem.setGoal(new KineticState(0.0, 0.0))).requires(this);
 
 

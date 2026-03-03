@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.sun.tools.javac.code.Type;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -73,6 +75,7 @@ public class Camera implements Subsystem {
 
 
             for (AprilTagDetection detection : currentDetections) {
+                ActiveOpMode.telemetry().addData("Detected Apriltag", detection.id);
                 int id = detection.id;
 
                 if (id == 20 || id == 24) {
