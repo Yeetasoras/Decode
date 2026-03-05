@@ -23,6 +23,9 @@ import dev.nextftc.hardware.impl.MotorEx;
 @TeleOp(name = "Drive w/ Cam")
 public class NewOpMode extends NextFTCOpMode {
 
+    private double xyScale = 0.7;
+    private double turnScale = 0.5;
+
     private TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     public NewOpMode() {
         addComponents(
@@ -53,9 +56,9 @@ public class NewOpMode extends NextFTCOpMode {
                 frontRightMotor,
                 backLeftMotor,
                 backRightMotor,
-                Gamepads.gamepad1().leftStickY().negate(),
-                Gamepads.gamepad1().leftStickX(),
-                Gamepads.gamepad1().rightStickX()
+                Gamepads.gamepad1().leftStickY().negate().mapToRange(doubleValue -> doubleValue * xyScale),
+                Gamepads.gamepad1().leftStickX().mapToRange(doubleValue -> doubleValue * xyScale),
+                Gamepads.gamepad1().rightStickX().mapToRange(doubleValue -> doubleValue * turnScale)
                 //  ,new FieldCentric(imu)
         );
 
