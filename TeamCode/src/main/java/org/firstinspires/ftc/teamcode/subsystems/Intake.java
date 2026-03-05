@@ -27,8 +27,6 @@ public class Intake implements Subsystem {
     public Command spinUp = new InstantCommand(() -> power = 1).requires(this);
     public Command cutPower = new InstantCommand(() -> power = 0).requires(this);
 
-    public Command changeMotion = new InstantCommand(() -> intakeMotor.reverse()).requires(this);
-
 
     @Override
     public void periodic() {

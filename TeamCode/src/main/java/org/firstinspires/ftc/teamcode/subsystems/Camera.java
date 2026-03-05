@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.sun.tools.javac.code.Type;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -22,7 +24,7 @@ import dev.nextftc.ftc.ActiveOpMode;
 
 public class Camera implements Subsystem {
     public static final Camera INSTANCE = new Camera();
-    private Telemetry telemetry;
+    private TelemetryManager telemetry;
     private Camera() {
 
     }
@@ -46,7 +48,7 @@ public class Camera implements Subsystem {
 
     @Override
     public void initialize() {
-        telemetry = ActiveOpMode.telemetry();
+        telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         aprilTag = new AprilTagProcessor.Builder()
 
                 // The following default settings are available to un-comment and edit as needed.
@@ -76,7 +78,7 @@ public class Camera implements Subsystem {
 
 
             for (AprilTagDetection detection : currentDetections) {
-                ActiveOpMode.telemetry().addData("Detected Apriltag", detection.id);
+                telemetry.addData("Detected Apriltag", detection.id);
                 int id = detection.id;
 
                 if (detection.metadata != null) {
