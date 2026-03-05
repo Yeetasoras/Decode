@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 
 import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.telemetry.PanelsTelemetry;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -24,15 +25,15 @@ public class ShooterControlled implements Subsystem {
 
 
     private static final ControlSystem flywheelControlSystem = ControlSystem.builder()
-            .velPid(0.001, 0.0, 0.0)
-            .basicFF(0.003, 0.08, 0.0)
+            .velPid(-0.0005, 0.0, 0.0)
+            .basicFF(-0.000425, 0, -0.04)
             .build();
 
 
     private final MotorEx flywheelMotor = new MotorEx("flywheelMotor")
             .floatMode();
 
-    public Command spinUp = new InstantCommand(() -> flywheelControlSystem.setGoal(new KineticState(0.0, -1800.0))).requires(this);
+    public Command spinUp = new InstantCommand(() -> flywheelControlSystem.setGoal(new KineticState(0.0, 1800.0))).requires(this);
     public Command cutPower = new InstantCommand(() -> flywheelControlSystem.setGoal(new KineticState(0.0, 0.0))).requires(this);
 
 
@@ -44,13 +45,13 @@ public class ShooterControlled implements Subsystem {
     @Override
     public void periodic() {
         if (ActiveOpMode.isStarted()) {
-            velocity = flywheelMotor.getVelocity();
+            velocity = -flywheelMotor.getVelocity();
 
-            ActiveOpMode.telemetry().addData("Flywheel Velocity", "%.1f", velocity);
+            PanelsTelemetry.INSTANCE.getTelemetry().addData("Flywheel Velocity", velocity);
 
             flywheelMotor.setPower(flywheelControlSystem.calculate(new KineticState(
                     flywheelMotor.getCurrentPosition(),
-                    flywheelMotor.getVelocity()))
+                    -flywheelMotor.getVelocity()))
             );
         }
     }
