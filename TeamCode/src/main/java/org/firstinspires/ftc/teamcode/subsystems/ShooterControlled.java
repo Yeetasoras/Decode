@@ -25,7 +25,7 @@ public class ShooterControlled implements Subsystem {
 
     private static final ControlSystem flywheelControlSystem = ControlSystem.builder()
             .velPid(0.001, 0.0, 0.0)
-            .basicFF(-0.003, 0.08, 0.0)
+            .basicFF(0.003, 0.08, 0.0)
             .build();
 
 
