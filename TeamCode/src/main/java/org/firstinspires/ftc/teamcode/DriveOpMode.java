@@ -21,13 +21,13 @@ import dev.nextftc.hardware.impl.IMUEx;
 import dev.nextftc.hardware.impl.MotorEx;
 
 @TeleOp(name = "Drive w/ Cam")
-public class NewOpMode extends NextFTCOpMode {
+public class DriveOpMode extends NextFTCOpMode {
 
     private double xyScale = 0.7;
     private double turnScale = 0.5;
 
     private TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-    public NewOpMode() {
+    public DriveOpMode() {
         addComponents(
                 new SubsystemComponent(ShooterControlled.INSTANCE, Feeder.INSTANCE, Intake.INSTANCE, Camera.INSTANCE),
                 BulkReadComponent.INSTANCE,
@@ -84,6 +84,11 @@ public class NewOpMode extends NextFTCOpMode {
         Gamepads.gamepad1().triangle()
                 .whenBecomesTrue(Feeder.INSTANCE.spinUp)
                 .whenBecomesFalse(Feeder.INSTANCE.cutPower);
+
+        Gamepads.gamepad1().triangle()
+                .and(Gamepads.gamepad1().dpadUp().toggleOnBecomesTrue().not())
+                .whenBecomesTrue(Intake.INSTANCE.spinUp)
+                .whenBecomesFalse(Intake.INSTANCE.cutPower);
 
         Gamepads.gamepad1().circle()
                 .whenBecomesTrue(ShooterControlled.INSTANCE.spinUp);
