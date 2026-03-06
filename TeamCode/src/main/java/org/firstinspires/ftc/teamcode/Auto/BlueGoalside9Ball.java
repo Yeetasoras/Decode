@@ -23,7 +23,7 @@ import dev.nextftc.extensions.pedro.PedroComponent;
 import dev.nextftc.ftc.NextFTCOpMode;
 import dev.nextftc.ftc.components.BulkReadComponent;
 
-@Autonomous(name = "Red Goalside - 9")
+@Autonomous(name = "Blue Goalside - 9")
 public class BlueGoalside9Ball extends NextFTCOpMode {
 
     private TelemetryManager panelsTelemetry = PanelsTelemetry.INSTANCE.getTelemetry();
