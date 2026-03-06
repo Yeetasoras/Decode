@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 import dev.nextftc.core.commands.Command;
@@ -11,7 +14,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 public class Feeder implements Subsystem {
 
     public static final Feeder INSTANCE = new Feeder();
-    private Telemetry telemetry;
+    private TelemetryManager telemetry;
     private Feeder() {}
 
     private double power = 0;
@@ -25,7 +28,7 @@ public class Feeder implements Subsystem {
 
     @Override
     public void initialize() {
-        telemetry = ActiveOpMode.telemetry();
+        telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
 

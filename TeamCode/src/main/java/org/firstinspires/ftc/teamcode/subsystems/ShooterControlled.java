@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.bylazar.configurables.annotations.Configurable;
 import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import static dev.nextftc.bindings.Bindings.*;
@@ -24,7 +25,7 @@ import dev.nextftc.hardware.impl.MotorEx;
 @Configurable
 public class ShooterControlled implements Subsystem {
     public static final ShooterControlled INSTANCE = new ShooterControlled();
-    private Telemetry telemetry;
+    private TelemetryManager telemetry;
     private ShooterControlled() {
 
     }
@@ -62,6 +63,7 @@ public class ShooterControlled implements Subsystem {
 
     @Override
     public void initialize() {
+        telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
         flywheelControlSystem.setGoal(new KineticState(0.0, 0.0));
     }
 
@@ -77,9 +79,9 @@ public class ShooterControlled implements Subsystem {
 
 
             ballInPlace = ballColour.getDistance(DistanceUnit.MM) < ballDetectionDistance && ballColour.alpha() > ballDetectionAlpha;
-            PanelsTelemetry.INSTANCE.getTelemetry().addLine(String.format("Dist (mm), Alpha, Detected? %6.1f %6.1f", ballColour.getDistance(DistanceUnit.MM), ballColour.alpha(), ballInPlace));
+            telemetry.addLine(String.format("Dist (mm), Alpha, Detected? %6.1f %6.1f", ballColour.getDistance(DistanceUnit.MM), ballColour.alpha(), ballInPlace));
 
-            PanelsTelemetry.INSTANCE.getTelemetry().addData("Flywheel Velocity", velocity);
+            telemetry.addData("Flywheel Velocity", velocity);
         }
     }
 

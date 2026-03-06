@@ -3,12 +3,17 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.ftc.FTCCoordinates;
+import com.pedropathing.geometry.PedroCoordinates;
+import com.pedropathing.geometry.Pose;
 import com.sun.tools.javac.code.Type;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
@@ -16,6 +21,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.List;
 
+import dev.nextftc.control.filters.LowPassFilter;
 import dev.nextftc.core.commands.Command;
 import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.subsystems.Subsystem;
@@ -29,6 +35,24 @@ public class Camera implements Subsystem {
 
     }
 
+
+    //Localisation and Tracking Variables
+    private final Position cameraPosition = new Position(DistanceUnit.CM, 0, 0, 30, 0);
+    private final YawPitchRollAngles cameraOrientation = new YawPitchRollAngles(AngleUnit.DEGREES, 0, -80, 0, 0);
+
+    public Pose cameraCalculatedPose;
+
+    public boolean poseLive = false;
+
+    private final LowPassFilter xFilter = new LowPassFilter(0.01);
+    private final LowPassFilter yFilter = new LowPassFilter(0.01);
+
+    //20 - BLUE GOAL, 21 - GPP, 22 - PGP, 23 - PPG, 23 - RED GOAL
+    public int obelisk = 0;
+    public Angle bearingToGoal;
+
+
+    // Processors and constructors
     private AprilTagProcessor aprilTag;
     private VisionPortal visionPortal;
 
@@ -36,11 +60,8 @@ public class Camera implements Subsystem {
 
     public List<AprilTagDetection> currentDetections;
 
-    //20 - BLUE GOAL, 21 - GPP, 22 - PGP, 23 - PPG, 23 - RED GOAL
-    public int obelisk = 0;
-    public Angle bearingToGoal;
 
-
+    //Commands
     public Command enable = new InstantCommand(() -> doUpdate = true).requires(this);
 
     public Command disable = new InstantCommand(() -> doUpdate = false).requires(this);
@@ -49,16 +70,15 @@ public class Camera implements Subsystem {
     @Override
     public void initialize() {
         telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
-        aprilTag = new AprilTagProcessor.Builder()
 
-                // The following default settings are available to un-comment and edit as needed.
+        aprilTag = new AprilTagProcessor.Builder()
                 .setDrawAxes(true)
                 .setDrawCubeProjection(true)
                 .setDrawTagOutline(true)
                 .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
                 .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
                 .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
-
+                .setCameraPose(cameraPosition, cameraOrientation)
                 .build();
 
         VisionPortal.Builder builder = new VisionPortal.Builder();
@@ -76,9 +96,12 @@ public class Camera implements Subsystem {
         if (doUpdate) {
             currentDetections = aprilTag.getDetections();
 
+            if (currentDetections.isEmpty()) {
+                poseLive = false;
+            }
+
 
             for (AprilTagDetection detection : currentDetections) {
-                telemetry.addData("Detected Apriltag", detection.id);
                 int id = detection.id;
 
                 if (detection.metadata != null) {
@@ -89,8 +112,17 @@ public class Camera implements Subsystem {
 
                     if (id == 20 || id == 24) {
                         bearingToGoal = Angle.fromDeg(detection.ftcPose.bearing);
+
+                        poseLive = true;
+                        cameraCalculatedPose = new Pose(xFilter.filter(detection.robotPose.getPosition().x), yFilter.filter(detection.robotPose.getPosition().y), detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES), FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
+
+
+                    } else {
+                        poseLive = false;
                     }
                 } else {
+                    poseLive = false;
+
                     telemetry.addLine(String.format("\n==== (ID %d) Unknown", detection.id));
                     telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", detection.center.x, detection.center.y));
                 }
