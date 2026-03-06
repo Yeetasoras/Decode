@@ -116,7 +116,7 @@ public class Camera implements Subsystem {
                         poseLive = true;
                         cameraCalculatedPose = new Pose(xFilter.filter(detection.robotPose.getPosition().x), yFilter.filter(detection.robotPose.getPosition().y), detection.robotPose.getOrientation().getYaw(AngleUnit.DEGREES), FTCCoordinates.INSTANCE).getAsCoordinateSystem(PedroCoordinates.INSTANCE);
 
-
+                        telemetry.addLine(String.format("Robot Pose XY H %6.1f %6.1f %6.1f  (Inch)", cameraCalculatedPose.getX(), cameraCalculatedPose.getY(), cameraCalculatedPose.getHeading()));
                     } else {
                         poseLive = false;
                     }
