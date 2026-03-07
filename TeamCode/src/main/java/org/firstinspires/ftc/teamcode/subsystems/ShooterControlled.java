@@ -8,8 +8,9 @@ import com.qualcomm.hardware.rev.RevColorSensorV3;
 
 import static dev.nextftc.bindings.Bindings.*;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.Locale;
 
 import dev.nextftc.bindings.Button;
 import dev.nextftc.control.ControlSystem;
@@ -35,8 +36,10 @@ public class ShooterControlled implements Subsystem {
     private boolean ballInPlace = false;
     public Button ballDetected = button(() -> ballInPlace);
 
-    public static double ballDetectionDistance = 75;
-    public static double ballDetectionAlpha = 150;
+    private static double ballDetectionDistance = 75;
+    private static double ballDetectionAlpha = 150;
+
+    private boolean panic = false;
 
 
     //Flywheel control system
@@ -61,6 +64,11 @@ public class ShooterControlled implements Subsystem {
     public Command cutPower = new InstantCommand(() -> flywheelControlSystem.setGoal(new KineticState(0.0, 0.0))).requires(this);
 
 
+    //ball
+
+    public Command sensorPanic = new InstantCommand(() -> panic = true);
+
+
     @Override
     public void initialize() {
         telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
@@ -78,8 +86,13 @@ public class ShooterControlled implements Subsystem {
             );
 
 
-            ballInPlace = ballColour.getDistance(DistanceUnit.MM) < ballDetectionDistance && ballColour.alpha() > ballDetectionAlpha;
-            telemetry.addLine(String.format("Dist (mm), Alpha, Detected? %6.1f %6.1f", ballColour.getDistance(DistanceUnit.MM), ballColour.alpha(), ballInPlace));
+            ballInPlace = (ballColour.getDistance(DistanceUnit.MM) < ballDetectionDistance && ballColour.alpha() > ballDetectionAlpha) || panic;
+
+            if (ballInPlace) {
+                telemetry.addLine(String.format(Locale.ENGLISH,"BALL DETECTED: Dist (mm), Alpha, Detected? %6.1f %d", ballColour.getDistance(DistanceUnit.MM), ballColour.alpha()));
+            } else {
+                telemetry.addLine(String.format(Locale.ENGLISH,"NO BALL: Dist (mm), Alpha, Detected? %6.1f %d", ballColour.getDistance(DistanceUnit.MM), ballColour.alpha()));
+            }
 
             telemetry.addData("Flywheel Velocity", velocity);
         }

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.icu.text.TimeZoneFormat;
+
 import com.bylazar.telemetry.PanelsTelemetry;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -10,6 +12,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterControlled;
 
 import dev.nextftc.core.commands.Command;
+import dev.nextftc.core.commands.utility.InstantCommand;
 import dev.nextftc.core.components.BindingsComponent;
 import dev.nextftc.core.components.SubsystemComponent;
 import dev.nextftc.ftc.Gamepads;
@@ -64,10 +67,28 @@ public class DriveOpMode extends NextFTCOpMode {
 
         driverControlled.schedule();
 
-        Gamepads.gamepad1().dpadUp()
-                .toggleOnBecomesTrue()
-                .whenBecomesTrue(Intake.INSTANCE.spinUp)
-                .whenBecomesFalse(Intake.INSTANCE.cutPower);
+        //INTAKE COMMANDS
+        Gamepads.gamepad1().dpadDown()
+                        .whenBecomesTrue(Intake.INSTANCE.pushOut);
+
+        Gamepads.gamepad1().dpadDown()
+                        .or(Gamepads.gamepad1().dpadUp().toggleOnBecomesTrue())
+                        .whenBecomesFalse(Intake.INSTANCE.cutPower);
+
+
+        Gamepads.gamepad1().dpadDown().not()
+                        .and(Gamepads.gamepad1().dpadUp().toggleOnBecomesTrue())
+                                .whenBecomesTrue(Intake.INSTANCE.spinUp);
+        //old
+
+//        Gamepads.gamepad1().dpadUp()
+//                .toggleOnBecomesTrue()
+//                .whenBecomesTrue(Intake.INSTANCE.spinUp)
+//                .whenBecomesFalse(Intake.INSTANCE.cutPower);
+
+        Gamepads.gamepad1().rightBumper()
+                        .whenBecomesTrue(ShooterControlled.INSTANCE.sensorPanic);
+
 
         //DELETE SECTION IF ISSUES SHOOTING W/O HOLDING TRIANGLE
             //feeder when intaking

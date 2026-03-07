@@ -44,8 +44,8 @@ public class Camera implements Subsystem {
 
     public boolean poseLive = false;
 
-    private final LowPassFilter xFilter = new LowPassFilter(0.01);
-    private final LowPassFilter yFilter = new LowPassFilter(0.01);
+    private final LowPassFilter xFilter = new LowPassFilter(0.9);
+    private final LowPassFilter yFilter = new LowPassFilter(0.9);
 
     //20 - BLUE GOAL, 21 - GPP, 22 - PGP, 23 - PPG, 23 - RED GOAL
     public int obelisk = 0;
